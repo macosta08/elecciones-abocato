@@ -6,7 +6,7 @@ FUNCIONES
 // Función que genera la matriz con las elecciones
 const generarElecciones = (municipios, candidatos) => {
     const min = 0;
-    const max = 5;
+    const max = 25000;
   
     // Retorna un entero aleatorio entre min y max
     const getRandomInt = (min, max) => Math.floor(Math.random() * ( (max+1) - min)) + min
@@ -22,6 +22,8 @@ const generarElecciones = (municipios, candidatos) => {
 
 // Funcion para impprimir por consola la matriz
 const imprimir = () => {
+    console.log("Resultados de las últimas elecciones a gobernador en el estado 'La Frontera'");
+    console.log("");
     let txt = 'Elecciones \t |'; 
     Array(candidatos).fill().forEach( (_, c) => {
     txt =  `${txt} Candidato ${c+1} |`; 
@@ -38,7 +40,8 @@ const imprimir = () => {
 
 // Funcion que suma los elementos de un array
 function getSum(numbers) {
-    return numbers.reduce((acc, val) => acc + val, 0)
+    const reducer = (acc, val) => acc + val;
+    return numbers.reduce(reducer, 0)
 }
 
 /************************
@@ -50,20 +53,27 @@ const candidatos = 3;
 
 // Se genera la matriz de elecciones
 const matrizElecciones = generarElecciones(municipios, candidatos);
-
 imprimir();
-console.log(" ");
+
+//Se obtiene los votos totales
+const reducer = (acc, val) => acc + getSum(val);
+const votosTotalizados = matrizElecciones.reduce(reducer,0);
+console.log(`Votos totales en la elección: ${votosTotalizados}`);
+console.log("");
 
 // Se calcula el total de votos por candidato
-const totalesVotos = matrizElecciones.map( (arrVotos, candidato) => {
-    let votos = getSum(arrVotos);
-    return {candidato:candidato+1, votos};
+const votosCandidato = matrizElecciones.map( (arrVotos, idx) => {
+    const votos = getSum(arrVotos);
+    const porcentaje = `${(votos / votosTotalizados * 100).toFixed(2)}%`;
+    return {candidato:idx+1, votos, porcentaje};
 } );
 
 //Se imprime por consola
-console.log("Conteo de votos: ",...totalesVotos);
+console.log("Conteo de votos:");
+votosCandidato.forEach(e=> console.log(e));
 console.log(" ");
 
 //Se obtienen los 2 candidatos con votos mas altos
-const segundaVuelta = totalesVotos.sort( (a,b) => b.votos - a.votos).slice(0,2);
-console.log("Candidatos a segunda vuelta: ", ...segundaVuelta);
+const segundaVuelta = votosCandidato.sort( (a,b) => b.votos - a.votos).slice(0,2);
+console.log("Candidatos a segunda vuelta: ");
+segundaVuelta.forEach(e=> console.log(e));
